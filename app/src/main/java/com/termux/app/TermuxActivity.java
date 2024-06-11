@@ -66,8 +66,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
+import android.widget.ImageView;
+import android.net.Uri;
+import android.content.res.Configuration;
+import java.io.File;
 
 import java.util.Arrays;
+import static com.termux.shared.termux.TermuxConstants.TERMUX_HOME_DIR_PATH;
 
 /**
  * A terminal emulator activity.
@@ -194,6 +199,26 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private static final String ARG_ACTIVITY_RECREATED = "activity_recreated";
 
     private static final String LOG_TAG = "TermuxActivity";
+    private ImageView background;
+    
+    public void loadBackground(String path) {
+        if (mPreferences.isBackgroundEnabled()){
+            Uri bg = Uri.parse(path);
+            File bgf = new File(bg.getPath());
+            if (bgf.exists() && bgf.isFile())
+                background.setImageURI(bg);
+        }
+        
+    }
+    
+    @Override public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            loadBackground(TERMUX_HOME_DIR_PATH + "/.termux/bg_landscape");
+        }else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            loadBackground(TERMUX_HOME_DIR_PATH + "/.termux/bg_portrait");
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -278,6 +303,14 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         // Send the {@link TermuxConstants#BROADCAST_TERMUX_OPENED} broadcast to notify apps that Termux
         // app has been opened.
         TermuxUtils.sendTermuxOpenedBroadcast(this);
+        
+        background = findViewById(R.id.termux_background);
+        Configuration mConfiguration = getResources().getConfiguration();
+        if (mConfiguration.orientation == mConfiguration.ORIENTATION_LANDSCAPE) {
+            loadBackground(TERMUX_HOME_DIR_PATH + "/.termux/bg_landscape");
+        } else if (mConfiguration.orientation == mConfiguration.ORIENTATION_PORTRAIT) {
+            loadBackground(TERMUX_HOME_DIR_PATH + "/.termux/bg_portrait");
+        }
     }
 
     @Override

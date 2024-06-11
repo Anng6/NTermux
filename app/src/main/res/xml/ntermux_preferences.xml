@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:key="NTermux"
+        app:title="NTermux">
+
+        <SwitchPreferenceCompat
+            app:key="background"
+            app:summaryOff="启用终端背景图片"
+            app:summaryOn="图片加载路径(请手动放置):\n竖屏: ~/.termux/bg_portrait\n横屏: ~/.termux/bg_landscape"
+            app:title="Background" />
+
+        <SwitchPreferenceCompat
+            app:key="tapi"
+            app:summaryOff="启用集成Termux:API支持"
+            app:summaryOn="请勿升级termux-api软件包"
+            app:title="Integrated Termux:API support" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

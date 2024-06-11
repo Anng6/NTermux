@@ -9,8 +9,8 @@
     -->
     <style name="Theme.BaseActivity.DayNight.DarkActionBar" parent="Theme.MaterialComponents">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/red_400</item>
-        <item name="colorPrimaryVariant">@color/red_800</item>
+        <item name="colorPrimary">@color/grey_400</item>
+        <item name="colorPrimaryVariant">@color/grey_800</item>
         <item name="colorOnPrimary">@color/black</item>
 
         <!-- Secondary brand color. -->
@@ -42,8 +42,8 @@
      -->
     <style name="ThemeOverlay.BaseDialog.DayNight" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/red_400</item>
-        <item name="colorPrimaryVariant">@color/red_800</item>
+        <item name="colorPrimary">@color/grey_400</item>
+        <item name="colorPrimaryVariant">@color/grey_800</item>
         <item name="colorOnPrimary">@color/black</item>
 
         <!-- Secondary brand color. -->

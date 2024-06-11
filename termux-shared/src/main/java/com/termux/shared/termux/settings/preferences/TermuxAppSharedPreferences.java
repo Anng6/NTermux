@@ -67,6 +67,22 @@ public class TermuxAppSharedPreferences extends AppSharedPreferences {
     }
 
 
+    public boolean isBackgroundEnabled() {
+        return SharedPreferenceUtils.getBoolean(mSharedPreferences, TERMUX_APP.KEY_BG_ENABLED, TERMUX_APP.DEFAULT_VALUE_KEY_BG_ENABLED);
+    }
+
+    public void setBackgroundEnabled(boolean value) {
+        SharedPreferenceUtils.setBoolean(mSharedPreferences, TERMUX_APP.KEY_BG_ENABLED, value, false);
+    }
+    
+    public boolean isTapiEnabled() {
+        return SharedPreferenceUtils.getBoolean(mSharedPreferences, TERMUX_APP.KEY_TAPI_ENABLED, TERMUX_APP.DEFAULT_VALUE_KEY_TAPI_ENABLED);
+    }
+
+    public void setTapiEnabled(boolean value) {
+        SharedPreferenceUtils.setBoolean(mSharedPreferences, TERMUX_APP.KEY_TAPI_ENABLED, value, false);
+    }
+
 
     public boolean shouldShowTerminalToolbar() {
         return SharedPreferenceUtils.getBoolean(mSharedPreferences, TERMUX_APP.KEY_SHOW_TERMINAL_TOOLBAR, TERMUX_APP.DEFAULT_VALUE_SHOW_TERMINAL_TOOLBAR);
@@ -132,7 +148,8 @@ public class TermuxAppSharedPreferences extends AppSharedPreferences {
         sizes[1] = (int) (4f * dipInPixels); // min
 
         // http://www.google.com/design/spec/style/typography.html#typography-line-height
-        int defaultFontSize = Math.round(12 * dipInPixels);
+        //int defaultFontSize = Math.round(12 * dipInPixels);
+        int defaultFontSize = 20;
         // Make it divisible by 2 since that is the minimal adjustment step:
         if (defaultFontSize % 2 == 1) defaultFontSize--;
 

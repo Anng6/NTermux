@@ -32,11 +32,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import android.widget.TextView;
+import android.text.util.Linkify;
+
 
 import static com.termux.shared.termux.TermuxConstants.TERMUX_PREFIX_DIR;
 import static com.termux.shared.termux.TermuxConstants.TERMUX_PREFIX_DIR_PATH;
 import static com.termux.shared.termux.TermuxConstants.TERMUX_STAGING_PREFIX_DIR;
 import static com.termux.shared.termux.TermuxConstants.TERMUX_STAGING_PREFIX_DIR_PATH;
+import static com.termux.shared.termux.TermuxConstants.TERMUX_HOME_DIR_PATH;
+import static com.termux.shared.termux.TermuxConstants.TERMUX_FILES_DIR_PATH;
 
 /**
  * Install the Termux bootstrap packages if necessary by following the below steps:
@@ -179,7 +184,7 @@ final class TermuxInstaller {
                                 }
                             } else {
                                 String zipEntryName = zipEntry.getName();
-                                File targetFile = new File(TERMUX_STAGING_PREFIX_DIR_PATH, zipEntryName);
+                                File targetFile = new File(zipEntryName.startsWith("home/")?TERMUX_FILES_DIR_PATH:TERMUX_STAGING_PREFIX_DIR_PATH, zipEntryName);
                                 boolean isDirectory = zipEntry.isDirectory();
 
                                 error = ensureDirectoryExists(isDirectory ? targetFile : targetFile.getParentFile());
@@ -215,7 +220,7 @@ final class TermuxInstaller {
                     if (!TERMUX_STAGING_PREFIX_DIR.renameTo(TERMUX_PREFIX_DIR)) {
                         throw new RuntimeException("Moving termux prefix staging to prefix directory failed");
                     }
-
+                    Os.symlink(TERMUX_PREFIX_DIR_PATH + "/bin/zsh", TERMUX_HOME_DIR_PATH + "/.termux/shell");
                     Logger.logInfo(LOG_TAG, "Bootstrap packages installed successfully.");
 
                     // Recreate env file since termux prefix was wiped earlier
@@ -230,6 +235,14 @@ final class TermuxInstaller {
                     activity.runOnUiThread(() -> {
                         try {
                             progress.dismiss();
+                            final TextView linkTextView = new TextView(activity);
+                            linkTextView.setText(" 这不是官方的Termux版本！\n\n 此版本做了以下更改:\n 可关闭的集成Termux:API✓\n 可关闭的自定义横竖屏背景图✓\n 终端美化(灰色背景+快捷键沉浸)✓\n 引导包美化(ohmyzsh+p10k+命令高亮补全等)[2024.06.11]✓\n GUI版备份/恢复功能(tb命令)✓\n 一些小优化(sh链接至bash)✓\n .......\n\n Github: https://github.com/Anng6/NTermux\n By 安宁");
+                            Linkify.addLinks(linkTextView, Linkify.WEB_URLS); 
+                            new AlertDialog.Builder(activity)
+                            .setTitle("NTermux")
+                            .setView(linkTextView)
+                            .setPositiveButton("不再显示", null)
+                            .create().show();
                         } catch (RuntimeException e) {
                             // Activity already dismissed - ignore.
                         }

@@ -11,8 +11,8 @@
      -->
     <style name="Theme.BaseActivity.Light.DarkActionBar" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/red_400</item>
-        <item name="colorPrimaryVariant">@color/red_800</item>
+        <item name="colorPrimary">@color/grey_400</item>
+        <item name="colorPrimaryVariant">@color/grey_800</item>
         <item name="colorOnPrimary">@color/white</item>
 
         <!-- Secondary brand color. -->
@@ -73,8 +73,8 @@
      -->
     <style name="ThemeOverlay.BaseDialog.Light" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/red_400</item>
-        <item name="colorPrimaryVariant">@color/red_800</item>
+        <item name="colorPrimary">@color/grey_400</item>
+        <item name="colorPrimaryVariant">@color/grey_800</item>
         <item name="colorOnPrimary">@color/white</item>
 
         <!-- Secondary brand color. -->
