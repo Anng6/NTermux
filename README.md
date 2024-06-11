@@ -1,9 +1,10 @@
 # NTermux
 > 这不是官方的Termux版本！
+> 仅支持arm64-v8a架构！
 Latest version is `v0.118.0`.
 
 ## 截图
-![](NTermux.jpg)
+![](./NTermux.jpg)
 
 ## 下载
 [Releases](https://github.com/Anng6/NTermux/releases)
