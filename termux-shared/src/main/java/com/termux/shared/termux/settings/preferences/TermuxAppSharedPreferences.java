@@ -83,6 +83,14 @@ public class TermuxAppSharedPreferences extends AppSharedPreferences {
         SharedPreferenceUtils.setBoolean(mSharedPreferences, TERMUX_APP.KEY_TAPI_ENABLED, value, false);
     }
 
+    public boolean isAuthEnabled() {
+        return SharedPreferenceUtils.getBoolean(mSharedPreferences, TERMUX_APP.KEY_AUTH_ENABLED, TERMUX_APP.DEFAULT_VALUE_KEY_AUTH_ENABLED);
+    }
+
+    public void setAuthEnabled(boolean value) {
+        SharedPreferenceUtils.setBoolean(mSharedPreferences, TERMUX_APP.KEY_AUTH_ENABLED, value, false);
+    }
+
 
     public boolean shouldShowTerminalToolbar() {
         return SharedPreferenceUtils.getBoolean(mSharedPreferences, TERMUX_APP.KEY_SHOW_TERMINAL_TOOLBAR, TERMUX_APP.DEFAULT_VALUE_SHOW_TERMINAL_TOOLBAR);
@@ -148,8 +156,7 @@ public class TermuxAppSharedPreferences extends AppSharedPreferences {
         sizes[1] = (int) (4f * dipInPixels); // min
 
         // http://www.google.com/design/spec/style/typography.html#typography-line-height
-        //int defaultFontSize = Math.round(12 * dipInPixels);
-        int defaultFontSize = 20;
+        int defaultFontSize = Math.round(8 * dipInPixels);
         // Make it divisible by 2 since that is the minimal adjustment step:
         if (defaultFontSize % 2 == 1) defaultFontSize--;
 

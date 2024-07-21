@@ -96,6 +96,8 @@ public final class TermuxPreferenceConstants {
         public static final boolean DEFAULT_VALUE_KEY_BG_ENABLED = true;
         public static final String KEY_TAPI_ENABLED =  "tapi";
         public static final boolean DEFAULT_VALUE_KEY_TAPI_ENABLED = false;
+        public static final String KEY_AUTH_ENABLED =  "auth";
+        public static final boolean DEFAULT_VALUE_KEY_AUTH_ENABLED = false;
         
         
         public static final String KEY_TERMINAL_MARGIN_ADJUSTMENT =  "terminal_margin_adjustment";

@@ -221,6 +221,7 @@ final class TermuxInstaller {
                         throw new RuntimeException("Moving termux prefix staging to prefix directory failed");
                     }
                     Os.symlink(TERMUX_PREFIX_DIR_PATH + "/bin/zsh", TERMUX_HOME_DIR_PATH + "/.termux/shell");
+                    Os.chmod(TERMUX_HOME_DIR_PATH, 0700);
                     Logger.logInfo(LOG_TAG, "Bootstrap packages installed successfully.");
 
                     // Recreate env file since termux prefix was wiped earlier
@@ -236,7 +237,9 @@ final class TermuxInstaller {
                         try {
                             progress.dismiss();
                             final TextView linkTextView = new TextView(activity);
-                            linkTextView.setText(" 这不是官方的Termux版本！\n\n 此版本做了以下更改:\n 可关闭的集成Termux:API✓\n 可关闭的自定义横竖屏背景图✓\n 终端美化(灰色背景+快捷键沉浸)✓\n 引导包美化(ohmyzsh+p10k+命令高亮补全等)[2024.06.11]✓\n GUI版备份/恢复功能(tb命令)✓\n 一些小优化(sh链接至bash)✓\n .......\n\n Github: https://github.com/Anng6/NTermux\n By 安宁");
+                            linkTextView.setText("这不是官方的Termux版本！\n更新记录请查看GitHub.\n\nGitHub: https://github.com/Anng6/NTermux\nBy 安宁");
+                            linkTextView.setTextSize(16);
+                            linkTextView.setPadding(50, 50, 50, 50);
                             Linkify.addLinks(linkTextView, Linkify.WEB_URLS); 
                             new AlertDialog.Builder(activity)
                             .setTitle("NTermux")

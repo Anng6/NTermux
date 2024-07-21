@@ -6,15 +6,23 @@
 
         <SwitchPreferenceCompat
             app:key="background"
-            app:summaryOff="启用终端背景图片"
-            app:summaryOn="图片加载路径(请手动放置):\n竖屏: ~/.termux/bg_portrait\n横屏: ~/.termux/bg_landscape"
-            app:title="Background" />
+            app:summary="图片加载路径(请手动放置):\n竖屏: ~/.termux/bg_portrait\n横屏: ~/.termux/bg_landscape"
+            app:title="终端背景图片" />
 
         <SwitchPreferenceCompat
             app:key="tapi"
-            app:summaryOff="启用集成Termux:API支持"
-            app:summaryOn="请勿升级termux-api软件包"
-            app:title="Integrated Termux:API support" />
+            app:summary="请勿升级termux-api软件包"
+            app:title="集成Termux:API支持" />
+
+        <SwitchPreferenceCompat
+            app:key="auth"
+            app:summary="登陆时进行生物识别验证"
+            app:title="身份验证" />
+
+        <Preference
+            app:key="process"
+            app:summary="去除安卓12+的32进程限制(需Root)"
+            app:title="解除最大进程限制" />
 
     </PreferenceCategory>
 

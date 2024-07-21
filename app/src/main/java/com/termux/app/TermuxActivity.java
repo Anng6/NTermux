@@ -71,6 +71,10 @@ import android.net.Uri;
 import android.content.res.Configuration;
 import java.io.File;
 
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
+import java.util.concurrent.Executor;
+
 import java.util.Arrays;
 import static com.termux.shared.termux.TermuxConstants.TERMUX_HOME_DIR_PATH;
 
@@ -208,7 +212,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             if (bgf.exists() && bgf.isFile())
                 background.setImageURI(bg);
         }
-        
     }
     
     @Override public void onConfigurationChanged(Configuration newConfig) {
@@ -216,6 +219,39 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){
             loadBackground(TERMUX_HOME_DIR_PATH + "/.termux/bg_landscape");
         }else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            loadBackground(TERMUX_HOME_DIR_PATH + "/.termux/bg_portrait");
+        }
+    }
+
+    public void startTermuxService() {
+        try {
+            // Start the {@link TermuxService} and make it run regardless of who is bound to it
+            Intent serviceIntent = new Intent(this, TermuxService.class);
+            startService(serviceIntent);
+
+            // Attempt to bind to the service, this will call the {@link #onServiceConnected(ComponentName, IBinder)}
+            // callback if it succeeds.
+            if (!bindService(serviceIntent, this, 0))
+                throw new RuntimeException("bindService() failed");
+        } catch (Exception e) {
+            Logger.logStackTraceWithMessage(LOG_TAG,"TermuxActivity failed to start TermuxService", e);
+            Logger.showToast(this,
+                getString(e.getMessage() != null && e.getMessage().contains("app is in background") ?
+                    R.string.error_termux_service_start_failed_bg : R.string.error_termux_service_start_failed_general),
+                true);
+            mIsInvalidState = true;
+            return;
+        }
+
+        // Send the {@link TermuxConstants#BROADCAST_TERMUX_OPENED} broadcast to notify apps that Termux
+        // app has been opened.
+        TermuxUtils.sendTermuxOpenedBroadcast(this);
+
+        background = findViewById(R.id.termux_background);
+        Configuration mConfiguration = getResources().getConfiguration();
+        if (mConfiguration.orientation == mConfiguration.ORIENTATION_LANDSCAPE) {
+            loadBackground(TERMUX_HOME_DIR_PATH + "/.termux/bg_landscape");
+        } else if (mConfiguration.orientation == mConfiguration.ORIENTATION_PORTRAIT) {
             loadBackground(TERMUX_HOME_DIR_PATH + "/.termux/bg_portrait");
         }
     }
@@ -280,36 +316,37 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         registerForContextMenu(mTerminalView);
 
         FileReceiverActivity.updateFileReceiverActivityComponentsState(this);
-
-        try {
-            // Start the {@link TermuxService} and make it run regardless of who is bound to it
-            Intent serviceIntent = new Intent(this, TermuxService.class);
-            startService(serviceIntent);
-
-            // Attempt to bind to the service, this will call the {@link #onServiceConnected(ComponentName, IBinder)}
-            // callback if it succeeds.
-            if (!bindService(serviceIntent, this, 0))
-                throw new RuntimeException("bindService() failed");
-        } catch (Exception e) {
-            Logger.logStackTraceWithMessage(LOG_TAG,"TermuxActivity failed to start TermuxService", e);
-            Logger.showToast(this,
-                getString(e.getMessage() != null && e.getMessage().contains("app is in background") ?
-                    R.string.error_termux_service_start_failed_bg : R.string.error_termux_service_start_failed_general),
-                true);
-            mIsInvalidState = true;
-            return;
-        }
-
-        // Send the {@link TermuxConstants#BROADCAST_TERMUX_OPENED} broadcast to notify apps that Termux
-        // app has been opened.
-        TermuxUtils.sendTermuxOpenedBroadcast(this);
         
-        background = findViewById(R.id.termux_background);
-        Configuration mConfiguration = getResources().getConfiguration();
-        if (mConfiguration.orientation == mConfiguration.ORIENTATION_LANDSCAPE) {
-            loadBackground(TERMUX_HOME_DIR_PATH + "/.termux/bg_landscape");
-        } else if (mConfiguration.orientation == mConfiguration.ORIENTATION_PORTRAIT) {
-            loadBackground(TERMUX_HOME_DIR_PATH + "/.termux/bg_portrait");
+        if (mPreferences.isAuthEnabled()){
+            Executor executor = ContextCompat.getMainExecutor(this);
+            BiometricPrompt biometricPrompt = new BiometricPrompt(this,
+                executor, new BiometricPrompt.AuthenticationCallback() {
+                @Override
+                public void onAuthenticationError(int errorCode, CharSequence errString) {
+                    super.onAuthenticationError(errorCode, errString);
+                    Toast.makeText(TermuxActivity.this, errString, Toast.LENGTH_SHORT).show();
+                    finishActivityIfNotFinishing();
+                }
+                @Override
+                public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
+                    super.onAuthenticationSucceeded(result);
+                    startTermuxService();
+                }
+                @Override
+                public void onAuthenticationFailed() {
+                    super.onAuthenticationFailed();
+                    Toast.makeText(TermuxActivity.this, "认证失败！", Toast.LENGTH_SHORT).show();
+                    finishActivityIfNotFinishing();
+                }
+            });
+            BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                .setTitle("身份验证")
+                .setSubtitle("当前操作需要验证您的身份")
+                .setNegativeButtonText("取消")
+                .build();
+            biometricPrompt.authenticate(promptInfo);
+        }else{
+            startTermuxService();
         }
     }
 
